@@ -209,7 +209,10 @@
       <label>Restant na de reis (€) <span style="color:var(--muted);font-weight:400;text-transform:none;font-size:0.75rem">— achteraf invullen</span></label>
       <input type="number" id="pot-rest" inputmode="decimal" step="1" min="0" placeholder="nog niet bekend">
     </div>
-    <button class="btn-primary" onclick="savePot()">Opslaan</button>
+    <div style="display:flex;gap:10px">
+      <button class="btn-primary" onclick="savePot()" style="flex:2">Opslaan</button>
+      <button class="btn-primary" onclick="resetPot()" style="flex:1;background:linear-gradient(135deg,var(--red),#b03030)">Wissen</button>
+    </div>
   </div>
   <div id="pot-status"></div>
 </div>
@@ -437,9 +440,17 @@ function savePot() {
   potRest = rv!=='' ? parseFloat(rv) : -1;
   persist(); renderPot();
 }
+function resetPot() {
+  if (!confirm('Pot wissen?')) return;
+  potPP = 0; potRest = -1;
+  document.getElementById('pot-pp').value   = '';
+  document.getElementById('pot-rest').value = '';
+  persist(); renderPot();
+}
 function renderPot() {
-  if (potPP>0) document.getElementById('pot-pp').value = potPP;
-  if (potRest>=0) document.getElementById('pot-rest').value = potRest;
+  // Altijd huidige waarden tonen in de invoervelden
+  document.getElementById('pot-pp').value   = potPP > 0  ? potPP   : '';
+  document.getElementById('pot-rest').value = potRest >= 0 ? potRest : '';
   const c = document.getElementById('pot-status');
   if (potPP<=0) { c.innerHTML=`<div class="empty-s"><div class="ei">🪣</div><p>Stel een inleg in.</p></div>`; return; }
   const totaal = potPP*3;
